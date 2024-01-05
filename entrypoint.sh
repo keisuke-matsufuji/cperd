@@ -13,8 +13,8 @@ ls=$(ls -al)
 echo "ls $ls"
 gitversion=$(git version)
 echo "gitversion $gitversion"
-gitbranch=$(git branch)
-echo "gitbranch $gitbranch"
+# gitbranch=$(git branch)
+# echo "gitbranch $gitbranch"
 
 
 TARGET_DIR="."
@@ -24,6 +24,7 @@ if [ "$RUN_LOCAL" = "true" ]; then
 #   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -diff=\"git diff ${GITHUB_REF}\""
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
 else
+  git config --global --add safe.directory "$PWD"
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 fi
 
