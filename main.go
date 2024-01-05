@@ -143,9 +143,8 @@ func getErrorLevels(value int) string {
 	for _, key := range keys {
 		// using bitmasks to check if the level is active
 		if value&key != 0 {
-		} else {
+			result += fmt.Sprintf("%s, ", errorLevels[key])
 		}
-		result += fmt.Sprintf("%s, ", errorLevels[key])
 	}
 	return result
 }

@@ -25,26 +25,25 @@ if [ "$RUN_LOCAL" = "true" ]; then
   TARGET_DIR="./testdata"
 #   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -diff=\"git diff ${GITHUB_REF}\""
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
+
+  target_files=$(git diff --name-only $GITHUB_REF)
 else
   git config --global --add safe.directory "$PWD"
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
+
+  # mainブランチの情報をフェッチ
+  git fetch origin main:main
+
+  # mainブランチとの差分ファイルを取得
+  target_files=$(git diff --name-only $GITHUB_REF)
+  
 fi
-gitbranch=$(git branch --show-current)
-echo "gitbranch current: $gitbranch"
 
-branch_name=$(echo $GITHUB_REF | sed 's|refs/heads/||')
-echo "Current branch is: $branch_name"
-
-# mainブランチの情報をフェッチ
-git fetch origin main:main
-
-# mainブランチとの差分ファイルを取得
-diff_files=$(git diff --name-only $GITHUB_REF)
-echo "diff_files:  $diff_files"
+echo "target_files:  $target_files"
 
 # 差分ファイルの中からphp.iniと.htaccessを見つけ出す
 files=""
-for file in $diff_files
+for file in $target_files
 do
     if [[ $file == *'php.ini'* ]] || [[ $file == *'.htaccess'* ]]; then
         files+="$file "
