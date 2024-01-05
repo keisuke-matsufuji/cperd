@@ -13,7 +13,7 @@ RUN apt install -y -qq curl python3 jq
 # Install reviewdog
 RUN curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s
 
-COPY main.go main.go
+COPY main.go /main.go
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

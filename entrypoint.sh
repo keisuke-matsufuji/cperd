@@ -30,6 +30,12 @@ fi
 gitbranch=$(git branch --show-current)
 echo "gitbranch current: $gitbranch"
 
+branch_name=$(echo $GITHUB_REF | sed 's|refs/heads/||')
+echo "Current branch is: $branch_name"
+
+# mainブランチの情報をフェッチ
+git fetch origin main:main
+
 # mainブランチとの差分ファイルを取得
 diff_files=$(git diff --name-only $GITHUB_REF)
 echo "diff_files:  $diff_files"
