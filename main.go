@@ -95,11 +95,40 @@ func main() {
 	fmt.Println(string(result))
 }
 
+// func getErrorLevels(value int) string {
+
+// 	var (
+// 		result  string
+// 		flagStr string
+// 	)
+
+// 	// create a slice of keys
+// 	var keys []int
+// 	for k := range errorLevels {
+// 		keys = append(keys, k)
+// 	}
+
+// 	// sort the keys
+// 	sort.Ints(keys)
+
+// 	for _, key := range keys {
+// 		// using bitmasks to check if the level is active
+// 		if value&key != 0 {
+// 			flagStr = "+"
+// 		} else {
+// 			flagStr = "-"
+// 		}
+// 		str := fmt.Sprintf("%s: %s:%v", flagStr, errorLevels[key], key)
+
+// 		result += str + "\n"
+// 	}
+// 	return result
+// }
+
 func getErrorLevels(value int) string {
 
 	var (
 		result  string
-		flagStr string
 	)
 
 	// create a slice of keys
@@ -114,13 +143,9 @@ func getErrorLevels(value int) string {
 	for _, key := range keys {
 		// using bitmasks to check if the level is active
 		if value&key != 0 {
-			flagStr = "+"
 		} else {
-			flagStr = "-"
 		}
-		str := fmt.Sprintf("%s: %s:%v", flagStr, errorLevels[key], key)
-
-		result += str + "\n"
+		result += fmt.Sprintf("%s, ", errorLevels[key])
 	}
 	return result
 }
