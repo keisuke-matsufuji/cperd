@@ -18,9 +18,9 @@ echo "gitversion $gitversion"
 
 
 TARGET_DIR="."
+GITHUB_REF="refs/heads/main"
 if [ "$RUN_LOCAL" = "true" ]; then
   TARGET_DIR="./testdata"
-  GITHUB_REF="refs/heads/main"
 #   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -diff=\"git diff ${GITHUB_REF}\""
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
 else
@@ -31,7 +31,7 @@ gitbranch=$(git branch)
 echo "gitbranch $gitbranch"
 
 # mainブランチとの差分ファイルを取得
-diff_files=$(git diff --name-only main)
+diff_files=$(git diff --name-only $GITHUB_REF)
 echo "diff_files:  $diff_files"
 
 # 差分ファイルの中からphp.iniと.htaccessを見つけ出す
