@@ -27,8 +27,8 @@ else
   git config --global --add safe.directory "$PWD"
   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 fi
-gitbranch=$(git branch)
-echo "gitbranch $gitbranch"
+gitbranch=$(git branch --show-current)
+echo "gitbranch current: $gitbranch"
 
 # mainブランチとの差分ファイルを取得
 diff_files=$(git diff --name-only $GITHUB_REF)
