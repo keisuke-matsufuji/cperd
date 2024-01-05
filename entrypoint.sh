@@ -11,6 +11,8 @@ pwd2=$(pwd)
 echo "pwd2 $pwd2"
 ls=$(ls -al)
 echo "ls $ls"
+ls2=$(ls /)
+echo "ls2 $ls2"
 gitversion=$(git version)
 echo "gitversion $gitversion"
 # gitbranch=$(git branch)
