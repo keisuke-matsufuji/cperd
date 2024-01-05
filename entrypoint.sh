@@ -61,7 +61,7 @@ do
         read -r line column value <<< "$(echo "$htaccess_info")"
         json_data=("{\"file\":$(json_escape "$file"),\"line\":$line,\"column\":$column,\"value\":$(json_escape "$value")}")
     fi
-    OUTPUT=$(go run main.go "$json_data")
+    OUTPUT=$(go run /main.go "$json_data")
     echo "OUTPUT :: $OUTPUT"
     echo "$OUTPUT" | jq -r '. | "\(.file):\(.line):\(.column): \(.value)"' | eval ${REVIEWDOG_COMMAND}
 done
