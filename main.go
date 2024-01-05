@@ -7,23 +7,24 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 type FileInfo struct {
-	File   string `json:"file"`   // ファイル名
-	Line   int    `json:"line"`   // error_reportingが見つかった行数
-	Column int    `json:"column"` // error_reportingが見つかった文字の場所
-	Value  string `json:"value"`  // error_reportingの値
+	File   string `json:"file"`   // File name
+	Line   int    `json:"line"`   // Line number where error_reporting was found
+	Column int    `json:"column"` // Position of the character where error_reporting was found
+	Value  string `json:"value"`  // Value of error_reporting
 }
 
 type Json struct {
-	File   string `json:"file"`   // ファイル名
-	Line   string `json:"line"`   // error_reportingが見つかった行数
-	Column string `json:"column"` // error_reportingが見つかった文字の場所
-	Value  string `json:"value"`  // PHPの定義済みエラーレベルと有効/無効の表示
+	File   string `json:"file"`   // File name
+	Line   string `json:"line"`   // Line number where error_reporting was found
+	Column string `json:"column"` // Position of the character where error_reporting was found
+	Value  string `json:"value"`  // Display of PHP's predefined error level and whether it's enabled/disabled
 }
 
-// PHPのエラーレベルとその値
+// PHP error levels and their values
 var errorLevels = map[int]string{
 	1:     "E_ERROR",
 	2:     "E_WARNING",
@@ -43,55 +44,57 @@ var errorLevels = map[int]string{
 }
 
 func main() {
-	// os.Argsをチェックして引数があることを確認します。
+	// Check os.Args to ensure arguments are present
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run script.go '[JSON data]'")
 		os.Exit(1)
 	}
 
-	// 第1引数をJSONデータとして受け取ります。
+	// Receive the first argument as JSON data
 	jsonData := os.Args[1]
 
-	// FileInfoの構造体を初期化します。
+	// Initialize the FileInfo struct
 	var fileInfo FileInfo
 
-	// JSONデータをFileInfo構造体にアンマーシャルします。
+	// Unmarshal the JSON data into the FileInfo struct
 	err := json.Unmarshal([]byte(jsonData), &fileInfo)
 	if err != nil {
-		// アンマーシャル中にエラーが発生した場合はpanicします。
-		panic(err)
+		// Panic if an error occurs during unmarshalling
+		fmt.Println(err)
+		return
 	}
 
-	// 正規表現パターンを定義
+	// Define regular expression pattern
 	pattern := "[0-9]+"
-	// 正規表現パターンをコンパイル
+	// Compile the regular expression pattern
 	re, err := regexp.Compile(pattern)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
-	// 文字列から数字部分を抽出
+	// Extract the numeric part from the string
 	s := re.FindString(fileInfo.Value)
 	if s == "" {
 		return
 	}
-	// 設定された整数値から対応するレベルを算出する
+	// Calculate the corresponding level from the set integer value
 	i, _ := strconv.Atoi(s)
 	errorLevels := getErrorLevels(i)
 
 	j := Json{
 		File:   fileInfo.File,
-		Line:   strconv.Itoa(fileInfo.Line),	
+		Line:   strconv.Itoa(fileInfo.Line),
 		Column: strconv.Itoa(fileInfo.Column),
 		Value:  errorLevels,
 	}
-	// JSONにエンコード
+	// Encode to JSON
 	result, err := json.Marshal(j)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// JSONデータを出力
+	// Output the JSON data
 	fmt.Println(string(result))
 }
 
@@ -128,7 +131,7 @@ func main() {
 func getErrorLevels(value int) string {
 
 	var (
-		result  string
+		result string
 	)
 
 	// create a slice of keys
@@ -146,5 +149,8 @@ func getErrorLevels(value int) string {
 			result += fmt.Sprintf("%s, ", errorLevels[key])
 		}
 	}
+	// Trim the trailing comma and space
+	result = strings.TrimSuffix(result, ", ")
+
 	return result
 }

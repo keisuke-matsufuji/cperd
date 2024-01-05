@@ -6,15 +6,15 @@ json_escape () {
 
 pwd1=$(pwd)
 echo "pwd1 $pwd1"
-cd "$GITHUB_WORKSPACE"
-pwd2=$(pwd)
-echo "pwd2 $pwd2"
-ls=$(ls -al)
-echo "ls $ls"
-ls2=$(ls /)
-echo "ls2 $ls2"
-gitversion=$(git version)
-echo "gitversion $gitversion"
+# cd "$GITHUB_WORKSPACE"
+# pwd2=$(pwd)
+# echo "pwd2 $pwd2"
+# ls=$(ls -al)
+# echo "ls $ls"
+# ls2=$(ls /)
+# echo "ls2 $ls2"
+# gitversion=$(git version)
+# echo "gitversion $gitversion"
 # gitbranch=$(git branch)
 # echo "gitbranch $gitbranch"
 
@@ -22,21 +22,19 @@ echo "gitversion $gitversion"
 TARGET_DIR="."
 GITHUB_REF="refs/heads/main"
 if [ "$RUN_LOCAL" = "true" ]; then
-  TARGET_DIR="./testdata"
-#   REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -diff=\"git diff ${GITHUB_REF}\""
-  REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
+    TARGET_DIR="./cperd/testdata"
+    REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
 
-  target_files=$(git diff --name-only $GITHUB_REF)
+    target_files=$(ls -a $TARGET_DIR)
 else
-  git config --global --add safe.directory "$PWD"
-  REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
+    git config --global --add safe.directory "$PWD"
+    REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 
-  # mainブランチの情報をフェッチ
-  git fetch origin main:main
+    # mainブランチの情報をフェッチ
+    git fetch origin main:main
 
-  # mainブランチとの差分ファイルを取得
-  target_files=$(git diff --name-only $GITHUB_REF)
-  
+    # mainブランチとの差分ファイルを取得
+    target_files=$(git diff --name-only $GITHUB_REF)
 fi
 
 echo "target_files:  $target_files"
@@ -53,12 +51,13 @@ done
 # 各ファイルから必要な情報を取得し、JSONに変換
 for file in $files
 do
+    target=$TARGET_DIR/$file
     if [[ $file == *'php.ini'* ]]; then
-        php_ini_info=$(awk '/error_reporting/{print NR, index($0, "error_reporting"), $0}' "$file")
+        php_ini_info=$(awk '/error_reporting/{print NR, index($0, "error_reporting"), $0}' "$target")
         read -r line column value <<< "$(echo "$php_ini_info")"
         json_data=("{\"file\":$(json_escape "$file"),\"line\":$line,\"column\":$column,\"value\":$(json_escape "$value")}")
     elif [[ $file == *'.htaccess'* ]]; then
-        htaccess_info=$(awk '/php_value error_reporting/{print NR, index($0, "php_value error_reporting"), $0}' "$file")
+        htaccess_info=$(awk '/php_value error_reporting/{print NR, index($0, "php_value error_reporting"), $0}' "$target")
         read -r line column value <<< "$(echo "$htaccess_info")"
         json_data=("{\"file\":$(json_escape "$file"),\"line\":$line,\"column\":$column,\"value\":$(json_escape "$value")}")
     fi
