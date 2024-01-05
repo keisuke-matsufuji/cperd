@@ -1,3 +1,5 @@
+#!/bin/bash
+
 json_escape () {
     printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().rstrip("\n")))'
 }
