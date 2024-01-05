@@ -10,7 +10,10 @@ cd "$GITHUB_WORKSPACE"
 pwd2=$(pwd)
 echo "pwd2 $pwd2"
 ls=$(ls)
-echo "pwd2 $ls"
+echo "ls $ls"
+gitversion=$(git version)
+echo "gitversion $gitversion"
+
 
 TARGET_DIR="."
 if [ "$RUN_LOCAL" = "true" ]; then
