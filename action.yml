@@ -1,5 +1,9 @@
 name: 'php-error-reporting-directive-visualize'
 description: 'Visualize PHP error-reporting directives as predefined PHP error levels'
+author: 'keisuke-matsufuji'
+branding:
+  icon: check-circle
+  color: blue
 runs:
   using: 'docker'
   image: 'Dockerfile'
