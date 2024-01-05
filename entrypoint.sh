@@ -9,6 +9,8 @@ echo "pwd1 $pwd1"
 cd "$GITHUB_WORKSPACE"
 pwd2=$(pwd)
 echo "pwd2 $pwd2"
+ls=$(ls)
+echo "pwd2 $ls"
 
 TARGET_DIR="."
 if [ "$RUN_LOCAL" = "true" ]; then
