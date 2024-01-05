@@ -4,7 +4,11 @@ json_escape () {
     printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().rstrip("\n")))'
 }
 
+pwd1=$(pwd)
+echo "pwd1 $pwd1"
 cd "$GITHUB_WORKSPACE"
+pwd2=$(pwd)
+echo "pwd2 $pwd2"
 
 TARGET_DIR="."
 if [ "$RUN_LOCAL" = "true" ]; then
