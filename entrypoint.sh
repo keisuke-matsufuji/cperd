@@ -13,6 +13,8 @@ ls=$(ls -al)
 echo "ls $ls"
 gitversion=$(git version)
 echo "gitversion $gitversion"
+gitbranch=$(git branch)
+echo "gitbranch $gitbranch"
 
 
 TARGET_DIR="."
