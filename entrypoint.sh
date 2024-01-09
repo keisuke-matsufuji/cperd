@@ -4,55 +4,30 @@ json_escape () {
     printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().rstrip("\n")))'
 }
 
-pwd1=$(pwd)
-echo "pwd1 $pwd1"
-# cd "$GITHUB_WORKSPACE"
-# pwd2=$(pwd)
-# echo "pwd2 $pwd2"
-# ls=$(ls -al)
-# echo "ls $ls"
-# ls2=$(ls /)
-# echo "ls2 $ls2"
-# gitversion=$(git version)
-# echo "gitversion $gitversion"
-# gitbranch=$(git branch)
-# echo "gitbranch $gitbranch"
-
-
 TARGET_DIR="."
-GITHUB_REF="refs/heads/main"
 if [ "$RUN_LOCAL" = "true" ]; then
     TARGET_DIR="./cperd/testdata"
     REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -filter-mode=nofilter"
 
     target_files=$(ls -a $TARGET_DIR)
 else
-
     git config --global --add safe.directory "$PWD"
     REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 
-    # デフォルトブランチを取得
-    # default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+    # Get the default branch
     default_branch=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
     echo "default_branch $default_branch"
 
-    # デフォルトブランチの情報をフェッチ
+    # Fetch the information of the default branch
     git fetch origin $default_branch:$default_branch
 
-    # デフォルトブランチとの差分ファイルを取得
-    target_files0=$(git diff --name-only "refs/heads/$default_branch")
-    echo "target_files0 $target_files0"
-
-    # mainブランチの情報をフェッチ
-    git fetch origin main:main
-
-    # mainブランチとの差分ファイルを取得
-    target_files=$(git diff --name-only $GITHUB_REF)
+    # Get the difference files with the main branch
+    target_files=$(git diff --name-only "refs/heads/$default_branch")
 fi
 
 echo "target_files:  $target_files"
 
-# 差分ファイルの中からphp.iniと.htaccessを見つけ出す
+# Find php.ini and .htaccess from the difference files
 files=""
 for file in $target_files
 do
@@ -61,7 +36,7 @@ do
     fi
 done
 
-# 各ファイルから必要な情報を取得し、JSONに変換
+# Get the necessary information from each file and convert it to JSON
 for file in $files
 do
     target=$TARGET_DIR/$file
