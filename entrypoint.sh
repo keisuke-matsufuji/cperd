@@ -28,6 +28,9 @@ if [ "$RUN_LOCAL" = "true" ]; then
     target_files=$(ls -a $TARGET_DIR)
 else
 
+    git config --global --add safe.directory "$PWD"
+    REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
+
     # デフォルトブランチを取得
     default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
     echo "default_branch $default_branch"
@@ -38,10 +41,6 @@ else
     # デフォルトブランチとの差分ファイルを取得
     target_files0=$(git diff --name-only "refs/heads/$default_branch")
     echo "target_files0 $target_files0"
-
-
-    git config --global --add safe.directory "$PWD"
-    REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 
     # mainブランチの情報をフェッチ
     git fetch origin main:main
