@@ -33,7 +33,7 @@ else
 
     # デフォルトブランチを取得
     # default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
-    default_branch=$(git remote show <remote-name> | sed -n '/HEAD branch/s/.*: //p')
+    default_branch=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
     echo "default_branch $default_branch"
 
     # デフォルトブランチの情報をフェッチ
