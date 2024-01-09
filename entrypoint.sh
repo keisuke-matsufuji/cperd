@@ -32,7 +32,8 @@ else
     REVIEWDOG_COMMAND="reviewdog -efm=\"%f:%l:%c: %m\" -reporter=github-pr-review"
 
     # デフォルトブランチを取得
-    default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+    # default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+    default_branch=$(git remote show <remote-name> | sed -n '/HEAD branch/s/.*: //p')
     echo "default_branch $default_branch"
 
     # デフォルトブランチの情報をフェッチ
